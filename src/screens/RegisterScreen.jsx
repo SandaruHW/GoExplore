@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
+export default function RegisterScreen({ onRegister, onSwitchToLogin } = {}) {
   const colorScheme = Appearance.getColorScheme();
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
 
@@ -22,19 +22,28 @@ export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
     return () => sub.remove();
   }, []);
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({ email: false, password: false });
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
 
   const handleSubmit = () => {
     const newErrors = {
+      name: !name || name.length < 2,
       email: !email || !email.includes('@'),
       password: !password || password.length < 6,
+      confirmPassword: password !== confirmPassword,
     };
     setErrors(newErrors);
 
-    if (!newErrors.email && !newErrors.password) {
-      if (typeof onLogin === 'function') onLogin();
+    if (!Object.values(newErrors).some(Boolean)) {
+      if (typeof onRegister === 'function') onRegister();
     }
   };
 
@@ -55,8 +64,20 @@ export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
           </View>
         </View>
 
-        <Text style={[styles.title, { color: textColor }]}>Welcome Back</Text>
-        <Text style={[styles.subtitle, { color: subText }]}>Sign in to continue your journey</Text>
+        <Text style={[styles.title, { color: textColor }]}>Create Account</Text>
+        <Text style={[styles.subtitle, { color: subText }]}>Join us and start exploring the world</Text>
+
+        <View style={[styles.inputRow, errors.name ? styles.inputError : styles.inputNormal]}>
+          <Feather name="user" size={18} color="#94a3b8" />
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="John Doe"
+            style={[styles.input, { color: textColor }]}
+            placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+          />
+        </View>
+        {errors.name && <Text style={styles.errorText}>Please enter your name</Text>}
 
         <View style={[styles.inputRow, errors.email ? styles.inputError : styles.inputNormal]}>
           <Feather name="mail" size={18} color="#94a3b8" />
@@ -77,7 +98,7 @@ export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
           <TextInput
             value={password}
             onChangeText={setPassword}
-            placeholder="Enter your password"
+            placeholder="Create a password"
             secureTextEntry
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
@@ -85,20 +106,27 @@ export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
         </View>
         {errors.password && <Text style={styles.errorText}>Password must be at least 6 characters</Text>}
 
-        <View style={styles.forgotRow}>
-          <TouchableOpacity>
-            <Text style={[styles.forgotText, { color: '#06b6d4' }]}>Forgot Password?</Text>
-          </TouchableOpacity>
+        <View style={[styles.inputRow, errors.confirmPassword ? styles.inputError : styles.inputNormal]}>
+          <Feather name="lock" size={18} color="#94a3b8" />
+          <TextInput
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Confirm your password"
+            secureTextEntry
+            style={[styles.input, { color: textColor }]}
+            placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+          />
         </View>
+        {errors.confirmPassword && <Text style={styles.errorText}>Passwords do not match</Text>}
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit} activeOpacity={0.9}>
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
 
-        <View style={styles.registerRow}>
-          <Text style={[styles.registerText, { color: subText }]}>Don't have an account? </Text>
-          <TouchableOpacity onPress={onSwitchToRegister}>
-            <Text style={[styles.registerLink, { color: '#06b6d4' }]}>Register</Text>
+        <View style={styles.loginRow}>
+          <Text style={[styles.loginText, { color: subText }]}>Already have an account? </Text>
+          <TouchableOpacity onPress={onSwitchToLogin}>
+            <Text style={[styles.loginLink, { color: '#06b6d4' }]}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -176,13 +204,6 @@ const styles = StyleSheet.create({
     color: '#ef4444',
     marginBottom: 8,
   },
-  forgotRow: {
-    alignItems: 'flex-end',
-    marginBottom: 8,
-  },
-  forgotText: {
-    fontSize: 14,
-  },
   button: {
     backgroundColor: '#06b6d4',
     paddingVertical: 14,
@@ -194,15 +215,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
   },
-  registerRow: {
+  loginRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 12,
   },
-  registerText: {
+  loginText: {
     fontSize: 14,
   },
-  registerLink: {
+  loginLink: {
     fontSize: 14,
     fontWeight: '600',
   },
