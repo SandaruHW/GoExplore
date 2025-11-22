@@ -72,7 +72,7 @@ export default function RegisterScreen({ onRegister, onSwitchToLogin } = {}) {
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="John Doe"
+            placeholder="Sandaru Sathsara"
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
           />
@@ -84,7 +84,7 @@ export default function RegisterScreen({ onRegister, onSwitchToLogin } = {}) {
           <TextInput
             value={email}
             onChangeText={setEmail}
-            placeholder="your.email@example.com"
+            placeholder="sandaruhw.email@example.com"
             keyboardType="email-address"
             autoCapitalize="none"
             style={[styles.input, { color: textColor }]}
