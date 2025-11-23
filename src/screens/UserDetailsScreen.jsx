@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../context/AppContext';
 
 export default function UserDetailsScreen({ onBack }) {
   const { user, darkMode } = useAppContext();

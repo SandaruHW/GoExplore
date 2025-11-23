@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, Switch } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../context/AppContext';
 
 export default function ProfileScreen({ onLogout, onShowUserDetails, onShowHelpSupport }) {
   const { user, darkMode, toggleDarkMode, favorites } = useAppContext();

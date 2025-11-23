@@ -3,7 +3,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, StyleSheet,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../context/AppContext';
 import { destinations } from '../destinations.js';
 import FeaturedCarousel from './FeaturedCarousel';
 import DestinationCard from './DestinationCard';

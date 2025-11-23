@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DestinationModal from '../components/DestinationModal';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../context/AppContext';
 import { destinations } from '../destinations';
 
 const categories = [
