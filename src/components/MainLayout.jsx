@@ -9,8 +9,10 @@ import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
-export default function MainLayout() {
+export default function MainLayout({ onLogout }) {
   const { darkMode } = useAppContext();
+
+  const ProfileWrapper = () => <ProfileScreen onLogout={onLogout} />;
 
   return (
     <Tab.Navigator
@@ -60,7 +62,7 @@ export default function MainLayout() {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileWrapper}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" color={color} size={size} />

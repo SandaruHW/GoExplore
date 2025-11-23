@@ -25,6 +25,11 @@ export default function App() {
     setCurrentScreen('home');
   };
 
+  const handleLogout = () => {
+    console.log('Logged out');
+    setCurrentScreen('login');
+  };
+
   return (
     <AppProvider>
       <SafeAreaProvider>
@@ -43,7 +48,7 @@ export default function App() {
             ) : (
               // Render the real app layout. Native screens have been disabled above
               // to avoid a casting issue on some Android devices.
-              <MainLayout />
+              <MainLayout onLogout={handleLogout} />
             )}
             <StatusBar style="auto" />
           </View>
