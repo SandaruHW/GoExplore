@@ -31,7 +31,7 @@ export default function DestinationCard({ destination, onPress, compact }) {
 
         {/* Favorite Button */}
         <TouchableOpacity onPress={handleFavoritePress} style={[styles.favoriteButton, isAnimating && styles.animating]}>
-          <Feather name="heart" size={20} color={favorited ? '#ef4444' : '#6b7280'} fill={favorited ? '#ef4444' : 'transparent'} />
+          <Feather name="heart" size={20} color={favorited ? '#ef4444' : '#6b7280'} />
         </TouchableOpacity>
 
         {/* Badge */}
@@ -53,7 +53,7 @@ export default function DestinationCard({ destination, onPress, compact }) {
 
         {/* Rating */}
         <View style={styles.ratingContainer}>
-          <Feather name="star" size={16} color="#f59e0b" fill="#f59e0b" />
+          <Feather name="star" size={16} color="#f59e0b" />
           <Text style={[styles.rating, { color: darkMode ? '#fff' : '#111827' }]}>
             {destination.rating}
           </Text>
