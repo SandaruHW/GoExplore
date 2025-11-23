@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, StyleSheet, RefreshControl, SafeAreaView } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, StyleSheet, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useAppContext } from '../AppContext';
@@ -68,7 +69,7 @@ export default function HomeScreen() {
           {/* Featured Carousel */}
           <FeaturedCarousel
             destinations={destinations.slice(0, 3)}
-            onCardPress={(dest) => navigation.navigate('DestinationDetail', { id: dest.id })}
+            onCardPress={(dest) => console.log('Navigate to', dest.name)}
           />
 
           {/* Popular Destinations */}
