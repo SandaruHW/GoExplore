@@ -53,7 +53,7 @@ export default function HomeScreen() {
               <Text style={styles.userName}>{user?.firstName || 'Traveler'}</Text>
             </View>
             <Image 
-              source={{ uri: user?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop' }} 
+              source={{ uri: user?.avatar || 'https://www.shutterstock.com/image-vector/default-avatar-social-media-display-600nw-2632690107.jpg' }} 
               style={styles.avatar} 
             />
           </View>

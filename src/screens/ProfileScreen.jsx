@@ -11,7 +11,7 @@ export default function ProfileScreen({ onLogout, onShowUserDetails, onShowHelpS
   // Default user values if not set
   const displayName = user ? `${user.firstName || 'User'} ${user.lastName || ''}`.trim() : 'User';
   const displayEmail = user?.email || 'user@example.com';
-  const displayAvatar = user?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop';
+  const displayAvatar = user?.avatar || 'https://www.shutterstock.com/image-vector/default-avatar-social-media-display-600nw-2632690107.jpg';
 
   const settingsItems = [
     {
