@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import DestinationModal from '../components/DestinationModal';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useAppContext } from '../AppContext';
@@ -10,7 +10,8 @@ import DestinationCard from './DestinationCard';
 
 export default function FavoritesScreen() {
   const { favorites, darkMode } = useAppContext();
-  const navigation = useNavigation();
+  const [selectedDestination, setSelectedDestination] = React.useState(null);
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   const favoriteDestinations = destinations.filter((d) => favorites.includes(d.id));
 
@@ -33,7 +34,7 @@ export default function FavoritesScreen() {
                 <DestinationCard
                   key={destination.id}
                   destination={destination}
-                  onPress={() => navigation.navigate('DestinationDetail', { id: destination.id })}
+                  onPress={() => { setSelectedDestination(destination); setModalVisible(true); }}
                 />
               ))}
             </View>
@@ -53,6 +54,11 @@ export default function FavoritesScreen() {
           )}
         </View>
       </ScrollView>
+      <DestinationModal
+        visible={modalVisible}
+        destination={selectedDestination}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }

@@ -23,11 +23,13 @@ export default function DestinationCard({ destination, onPress, compact }) {
         <Image source={{ uri: destination.image }} style={[styles.image, compact && styles.compactImage]} />
         <LinearGradient colors={['transparent', 'rgba(0,0,0,0.5)']} style={styles.overlay} />
 
-        {/* Country Badge */}
-        <View style={styles.countryBadge}>
-          <Feather name="map-pin" size={14} color="#0ea5e9" />
-          <Text style={styles.countryText}>{destination.country}</Text>
-        </View>
+        {/* Country Badge (hidden for Sri Lanka) */}
+        {destination.country && destination.country !== 'Sri Lanka' && (
+          <View style={styles.countryBadge}>
+            <Feather name="map-pin" size={14} color="#0ea5e9" />
+            <Text style={styles.countryText}>{destination.country}</Text>
+          </View>
+        )}
 
         {/* Favorite Button */}
         <TouchableOpacity onPress={handleFavoritePress} style={[styles.favoriteButton, isAnimating && styles.animating]}>

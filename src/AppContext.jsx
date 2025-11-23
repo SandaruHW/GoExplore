@@ -7,9 +7,9 @@ export function AppProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
   const [darkMode, setDarkMode] = useState(Appearance.getColorScheme() === 'dark');
   const [user, setUser] = useState({
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    email: 'sarah.johnson@email.com',
+    firstName: 'Tiya',
+    lastName: 'Seneviratne',
+    email: 'tiya.seneviratne@email.com',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop',
   });
 

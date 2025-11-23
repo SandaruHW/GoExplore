@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// Native stack disabled temporarily to avoid native-stack related crashes
 import { useAppContext } from '../AppContext';
 import { Feather } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
@@ -8,11 +9,14 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
+// const Stack = createNativeStackNavigator();
 
-export default function MainLayout() {
+export default function MainLayout({ onLogout, onShowUserDetails, onShowHelpSupport }) {
   const { darkMode } = useAppContext();
 
-  return (
+  const ProfileWrapper = (props) => <ProfileScreen {...props} onLogout={onLogout} onShowUserDetails={onShowUserDetails} onShowHelpSupport={onShowHelpSupport} />;
+
+  const Tabs = () => (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
@@ -60,7 +64,7 @@ export default function MainLayout() {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileWrapper}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" color={color} size={size} />
@@ -69,4 +73,7 @@ export default function MainLayout() {
       />
     </Tab.Navigator>
   );
+
+  // Render only the tab navigator to avoid creating native stack screens
+  return <Tabs />;
 }

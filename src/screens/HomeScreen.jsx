@@ -7,11 +7,14 @@ import { useAppContext } from '../AppContext';
 import { destinations } from '../destinations.js';
 import FeaturedCarousel from './FeaturedCarousel';
 import DestinationCard from './DestinationCard';
+import DestinationModal from '../components/DestinationModal';
 
 export default function HomeScreen() {
   const { user, darkMode } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -21,7 +24,8 @@ export default function HomeScreen() {
   };
 
   const handleDestinationPress = (destination) => {
-    console.log('Navigate to', destination.name);
+    setSelectedDestination(destination);
+    setModalVisible(true);
   };
 
   const popularDestinations = destinations.filter((d) => d.badge === 'Popular').slice(0, 5);
@@ -69,7 +73,7 @@ export default function HomeScreen() {
           {/* Featured Carousel */}
           <FeaturedCarousel
             destinations={destinations.slice(0, 3)}
-            onCardPress={(dest) => console.log('Navigate to', dest.name)}
+            onCardPress={(dest) => handleDestinationPress(dest)}
           />
 
           {/* Popular Destinations */}
@@ -112,6 +116,11 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
+      <DestinationModal
+        visible={modalVisible}
+        destination={selectedDestination}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
