@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useAppContext } from '../AppContext';
 
-export default function ProfileScreen({ onLogout }) {
+export default function ProfileScreen({ onLogout, onShowUserDetails }) {
   const { user, darkMode, toggleDarkMode, favorites } = useAppContext();
 
   const settingsItems = [
@@ -13,7 +13,7 @@ export default function ProfileScreen({ onLogout }) {
       id: 'account',
       iconName: 'user',
       label: 'My Account',
-      action: () => console.log('My Account'),
+      action: () => onShowUserDetails(),
     },
     {
       id: 'help',

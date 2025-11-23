@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppProvider } from './src/AppContext';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import UserDetailsScreen from './src/screens/UserDetailsScreen';
 import MainLayout from './src/components/MainLayout';
 
 // Disable native screens to avoid RNSScreen native prop casting on some Android setups
@@ -14,6 +15,7 @@ enableScreens(false);
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('login');
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
   const handleLogin = () => {
     console.log('Logged in');
@@ -45,10 +47,15 @@ export default function App() {
                 onRegister={handleRegister}
                 onSwitchToLogin={() => setCurrentScreen('login')}
               />
+            ) : showUserDetails ? (
+              <UserDetailsScreen onBack={() => setShowUserDetails(false)} />
             ) : (
               // Render the real app layout. Native screens have been disabled above
               // to avoid a casting issue on some Android devices.
-              <MainLayout onLogout={handleLogout} />
+              <MainLayout 
+                onLogout={handleLogout} 
+                onShowUserDetails={() => setShowUserDetails(true)} 
+              />
             )}
             <StatusBar style="auto" />
           </View>
