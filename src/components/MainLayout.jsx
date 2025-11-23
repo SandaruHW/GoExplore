@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // Native stack disabled temporarily to avoid native-stack related crashes
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../context/AppContext';
 import { Feather } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';

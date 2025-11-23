@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Modal, View, Text, Image, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, ScrollView, TouchableWithoutFeedback, Animated, Easing, Share, Linking, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../context/AppContext';
 let BlurView = null;
 try {
   // use dynamic require so app won't crash if expo-blur isn't installed

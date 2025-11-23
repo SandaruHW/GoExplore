@@ -1,12 +1,50 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useAppContext } from '../AppContext';
+import * as ImagePicker from 'expo-image-picker';
+import { useAppContext } from '../context/AppContext';
 
 export default function UserDetailsScreen({ onBack }) {
-  const { user, darkMode } = useAppContext();
+  const { user, darkMode, updateUserProfile } = useAppContext();
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handlePickImage = async () => {
+    try {
+      // Request camera roll permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'We need permission to access your photo library');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setIsUpdating(true);
+        // In a real app, you would upload this to a server and get back a URL
+        // For now, we'll use the local URI
+        const imageUri = result.assets[0].uri;
+        await updateUserProfile({ avatar: imageUri });
+        Alert.alert('Success', 'Profile picture updated!');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to pick image: ' + error.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleChangeProfilePic = async () => {
+    await handlePickImage();
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: darkMode ? '#111827' : '#f9fafb' }]}>
@@ -29,7 +67,22 @@ export default function UserDetailsScreen({ onBack }) {
         <View style={[styles.detailsCard, { backgroundColor: darkMode ? '#1f2937' : '#fff' }]}>
           {/* Avatar */}
           <View style={styles.avatarContainer}>
-            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+            {isUpdating && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#0ea5e9" />
+              </View>
+            )}
+            <Image 
+              source={{ uri: user?.avatar || 'https://www.shutterstock.com/image-vector/default-avatar-social-media-display-600nw-2632690107.jpg' }} 
+              style={styles.avatar} 
+            />
+            <TouchableOpacity 
+              style={styles.editAvatarButton}
+              onPress={handleChangeProfilePic}
+              disabled={isUpdating}
+            >
+              <Feather name="edit-2" size={14} color="#fff" />
+            </TouchableOpacity>
           </View>
 
           {/* User Information */}
@@ -41,7 +94,7 @@ export default function UserDetailsScreen({ onBack }) {
                   Full Name
                 </Text>
                 <Text style={[styles.infoValue, { color: darkMode ? '#fff' : '#111827' }]}>
-                  {user.firstName} {user.lastName}
+                  {user?.firstName} {user?.lastName}
                 </Text>
               </View>
             </View>
@@ -55,7 +108,7 @@ export default function UserDetailsScreen({ onBack }) {
                   Email Address
                 </Text>
                 <Text style={[styles.infoValue, { color: darkMode ? '#fff' : '#111827' }]}>
-                  {user.email}
+                  {user?.email}
                 </Text>
               </View>
             </View>
@@ -149,6 +202,7 @@ const styles = StyleSheet.create({
   avatarContainer: {
     alignItems: 'center',
     marginBottom: 24,
+    position: 'relative',
   },
   avatar: {
     width: 100,
@@ -156,6 +210,33 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 4,
     borderColor: '#0ea5e9',
+  },
+  editAvatarButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: '25%',
+    backgroundColor: '#0ea5e9',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
   infoSection: {
     marginBottom: 24,

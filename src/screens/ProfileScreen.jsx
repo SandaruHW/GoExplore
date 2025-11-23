@@ -3,10 +3,15 @@ import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, Switch } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { useAppContext } from '../AppContext';
+import { useAppContext } from '../context/AppContext';
 
 export default function ProfileScreen({ onLogout, onShowUserDetails, onShowHelpSupport }) {
   const { user, darkMode, toggleDarkMode, favorites } = useAppContext();
+
+  // Default user values if not set
+  const displayName = user ? `${user.firstName || 'User'} ${user.lastName || ''}`.trim() : 'User';
+  const displayEmail = user?.email || 'user@example.com';
+  const displayAvatar = user?.avatar || 'https://www.shutterstock.com/image-vector/default-avatar-social-media-display-600nw-2632690107.jpg';
 
   const settingsItems = [
     {
@@ -33,14 +38,12 @@ export default function ProfileScreen({ onLogout, onShowUserDetails, onShowHelpS
           {/* User Info Card */}
           <View style={styles.userCard}>
             <View style={styles.userInfo}>
-              <Image source={{ uri: user.avatar }} style={styles.avatar} />
+              <Image source={{ uri: displayAvatar }} style={styles.avatar} />
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>
-                  {user.firstName} {user.lastName}
-                </Text>
+                <Text style={styles.userName}>{displayName}</Text>
                 <View style={styles.emailContainer}>
                   <Feather name="mail" size={14} color="rgba(255,255,255,0.9)" />
-                  <Text style={styles.email}>{user.email}</Text>
+                  <Text style={styles.email}>{displayEmail}</Text>
                 </View>
               </View>
             </View>

@@ -8,12 +8,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   Appearance,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useAppContext } from '../context/AppContext';
+import { registerValidationSchema, validatePasswordStrength } from '../utils/validationSchemas';
 
 export default function RegisterScreen({ onRegister, onSwitchToLogin } = {}) {
   const colorScheme = Appearance.getColorScheme();
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
+  const { register } = useAppContext();
 
   useEffect(() => {
     const sub = Appearance.addChangeListener(({ colorScheme }) => {
@@ -22,28 +27,66 @@ export default function RegisterScreen({ onRegister, onSwitchToLogin } = {}) {
     return () => sub.remove();
   }, []);
 
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({
-    name: false,
-    email: false,
-    password: false,
-    confirmPassword: false,
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({ strength: 'none', message: '' });
 
-  const handleSubmit = () => {
-    const newErrors = {
-      name: !name || name.length < 2,
-      email: !email || !email.includes('@'),
-      password: !password || password.length < 6,
-      confirmPassword: password !== confirmPassword,
-    };
-    setErrors(newErrors);
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+    setPasswordStrength(validatePasswordStrength(text));
+  };
 
-    if (!Object.values(newErrors).some(Boolean)) {
-      if (typeof onRegister === 'function') onRegister();
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      setErrors({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      });
+
+      // Validate using Yup schema
+      await registerValidationSchema.validate({
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+      });
+
+      // Attempt registration
+      await register({ firstName, lastName, email, password });
+
+      if (typeof onRegister === 'function') {
+        onRegister();
+      }
+    } catch (error) {
+      if (error.path) {
+        // Yup validation error
+        setErrors((prev) => ({
+          ...prev,
+          [error.path]: error.message,
+        }));
+      } else {
+        // Auth service error
+        Alert.alert('Registration Failed', error.message || 'An error occurred during registration');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,60 +110,112 @@ export default function RegisterScreen({ onRegister, onSwitchToLogin } = {}) {
         <Text style={[styles.title, { color: textColor }]}>Create Account</Text>
         <Text style={[styles.subtitle, { color: subText }]}>Join us and start exploring the world</Text>
 
-        <View style={[styles.inputRow, errors.name ? styles.inputError : styles.inputNormal]}>
+        <View style={[styles.inputRow, errors.firstName ? styles.inputError : styles.inputNormal]}>
           <Feather name="user" size={18} color="#94a3b8" />
           <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder="Sandaru Sathsara"
+            value={firstName}
+            onChangeText={(text) => {
+              setFirstName(text);
+              if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: '' }));
+            }}
+            placeholder="First Name"
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+            editable={!isLoading}
           />
         </View>
-        {errors.name && <Text style={styles.errorText}>Please enter your name</Text>}
+        {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
+
+        <View style={[styles.inputRow, errors.lastName ? styles.inputError : styles.inputNormal]}>
+          <Feather name="user" size={18} color="#94a3b8" />
+          <TextInput
+            value={lastName}
+            onChangeText={(text) => {
+              setLastName(text);
+              if (errors.lastName) setErrors((prev) => ({ ...prev, lastName: '' }));
+            }}
+            placeholder="Last Name"
+            style={[styles.input, { color: textColor }]}
+            placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+            editable={!isLoading}
+          />
+        </View>
+        {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
 
         <View style={[styles.inputRow, errors.email ? styles.inputError : styles.inputNormal]}>
           <Feather name="mail" size={18} color="#94a3b8" />
           <TextInput
             value={email}
-            onChangeText={setEmail}
-            placeholder="sandaruhw.email@example.com"
+            onChangeText={(text) => {
+              setEmail(text);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+            }}
+            placeholder="your.email@example.com"
             keyboardType="email-address"
             autoCapitalize="none"
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+            editable={!isLoading}
           />
         </View>
-        {errors.email && <Text style={styles.errorText}>Please enter a valid email</Text>}
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
         <View style={[styles.inputRow, errors.password ? styles.inputError : styles.inputNormal]}>
           <Feather name="lock" size={18} color="#94a3b8" />
           <TextInput
             value={password}
-            onChangeText={setPassword}
+            onChangeText={handlePasswordChange}
             placeholder="Create a password"
             secureTextEntry
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+            editable={!isLoading}
           />
         </View>
-        {errors.password && <Text style={styles.errorText}>Password must be at least 6 characters</Text>}
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+        {password && !errors.password && (
+          <Text
+            style={[
+              styles.strengthText,
+              passwordStrength.strength === 'strong'
+                ? styles.strengthStrong
+                : passwordStrength.strength === 'medium'
+                  ? styles.strengthMedium
+                  : styles.strengthWeak,
+            ]}
+          >
+            {passwordStrength.message}
+          </Text>
+        )}
 
         <View style={[styles.inputRow, errors.confirmPassword ? styles.inputError : styles.inputNormal]}>
           <Feather name="lock" size={18} color="#94a3b8" />
           <TextInput
             value={confirmPassword}
-            onChangeText={setConfirmPassword}
+            onChangeText={(text) => {
+              setConfirmPassword(text);
+              if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+            }}
             placeholder="Confirm your password"
             secureTextEntry
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+            editable={!isLoading}
           />
         </View>
-        {errors.confirmPassword && <Text style={styles.errorText}>Passwords do not match</Text>}
+        {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit} activeOpacity={0.9}>
-          <Text style={styles.buttonText}>Create Account</Text>
+        <TouchableOpacity
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleSubmit}
+          activeOpacity={0.9}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Create Account</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.loginRow}>
@@ -204,11 +299,28 @@ const styles = StyleSheet.create({
     color: '#ef4444',
     marginBottom: 8,
   },
+  strengthText: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginBottom: 12,
+  },
+  strengthWeak: {
+    color: '#ef4444',
+  },
+  strengthMedium: {
+    color: '#f59e0b',
+  },
+  strengthStrong: {
+    color: '#10b981',
+  },
   button: {
     backgroundColor: '#06b6d4',
     paddingVertical: 14,
     borderRadius: 12,
     marginTop: 6,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonText: {
     color: '#fff',

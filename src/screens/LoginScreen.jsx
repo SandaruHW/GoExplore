@@ -8,12 +8,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   Appearance,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useAppContext } from '../context/AppContext';
+import { loginValidationSchema } from '../utils/validationSchemas';
 
 export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
   const colorScheme = Appearance.getColorScheme();
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
+  const { login } = useAppContext();
 
   useEffect(() => {
     const sub = Appearance.addChangeListener(({ colorScheme }) => {
@@ -24,17 +29,36 @@ export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({ email: false, password: false });
+  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
-    const newErrors = {
-      email: !email || !email.includes('@'),
-      password: !password || password.length < 6,
-    };
-    setErrors(newErrors);
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      setErrors({ email: '', password: '' });
 
-    if (!newErrors.email && !newErrors.password) {
-      if (typeof onLogin === 'function') onLogin();
+      // Validate using Yup schema
+      await loginValidationSchema.validate({ email, password });
+
+      // Attempt login
+      await login(email, password);
+
+      if (typeof onLogin === 'function') {
+        onLogin();
+      }
+    } catch (error) {
+      if (error.path) {
+        // Yup validation error
+        setErrors((prev) => ({
+          ...prev,
+          [error.path]: error.message,
+        }));
+      } else {
+        // Auth service error
+        Alert.alert('Login Failed', error.message || 'An error occurred during login');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,28 +86,36 @@ export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
           <Feather name="mail" size={18} color="#94a3b8" />
           <TextInput
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+            }}
             placeholder="your.email@example.com"
             keyboardType="email-address"
             autoCapitalize="none"
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+            editable={!isLoading}
           />
         </View>
-        {errors.email && <Text style={styles.errorText}>Please enter a valid email</Text>}
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
         <View style={[styles.inputRow, errors.password ? styles.inputError : styles.inputNormal]}>
           <Feather name="lock" size={18} color="#94a3b8" />
           <TextInput
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => {
+              setPassword(text);
+              if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+            }}
             placeholder="Enter your password"
             secureTextEntry
             style={[styles.input, { color: textColor }]}
             placeholderTextColor={darkMode ? '#475569' : '#9CA3AF'}
+            editable={!isLoading}
           />
         </View>
-        {errors.password && <Text style={styles.errorText}>Password must be at least 6 characters</Text>}
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
         <View style={styles.forgotRow}>
           <TouchableOpacity>
@@ -91,8 +123,17 @@ export default function LoginScreen({ onLogin, onSwitchToRegister } = {}) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit} activeOpacity={0.9}>
-          <Text style={styles.buttonText}>Sign In</Text>
+        <TouchableOpacity
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleSubmit}
+          activeOpacity={0.9}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Sign In</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.registerRow}>
@@ -188,6 +229,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     marginTop: 6,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonText: {
     color: '#fff',
