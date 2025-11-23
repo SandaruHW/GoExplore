@@ -9,9 +9,9 @@ import { destinations } from '../destinations';
 
 const categories = [
   { id: 'all', name: 'All', icon: 'compass' },
-  { id: 'City', name: 'Cities', icon: 'home' },
-  { id: 'Beach', name: 'Beaches', icon: 'sun' },
-  { id: 'Mountain', name: 'Mountains', icon: 'triangle' },
+  { id: 'Cities', name: 'Cities', icon: 'home' },
+  { id: 'Beaches', name: 'Beaches', icon: 'sun' },
+  { id: 'Mountains', name: 'Mountains', icon: 'triangle' },
   { id: 'Nature', name: 'Nature', icon: 'map-pin' },
 ];
 
@@ -113,7 +113,7 @@ export default function SearchScreen() {
                         <View style={styles.gridLocation}>
                           <Feather name="map-pin" size={10} color="#fff" />
                           <Text style={styles.gridLocationText} numberOfLines={1}>
-                            {destination.country}
+                            {destination.location}
                           </Text>
                         </View>
                       </View>
