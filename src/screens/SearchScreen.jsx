@@ -44,7 +44,9 @@ export default function SearchScreen() {
 
           {/* Search Bar */}
           <View style={styles.searchContainer}>
-            <Feather name="search" size={20} color="#9ca3af" style={styles.searchIcon} />
+            <View style={styles.searchIconContainer}>
+              <Feather name="search" size={20} color="#0ea5e9" />
+            </View>
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -164,6 +166,20 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchIconContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
+    width: 35,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    //backgroundColor: 'rgba(14, 165, 233, 0.1)',
+    borderRadius: 12,
+    paddingRight: 15,
   },
   searchIcon: {
     position: 'absolute',

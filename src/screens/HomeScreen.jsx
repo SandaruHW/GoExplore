@@ -47,20 +47,48 @@ export default function HomeScreen() {
       >
         {/* Header */}
         <LinearGradient colors={['#0ea5e9', '#14b8a6']} style={styles.header}>
-          <View style={styles.headerTop}>
-            <View>
-              <Text style={styles.welcomeText}>Welcome,</Text>
-              <Text style={styles.userName}>{user?.firstName || 'Traveler'}</Text>
+          <View style={styles.headerContent}>
+            {/* Welcome Section */}
+            <View style={styles.welcomeSection}>
+              <View style={styles.textContainer}>
+                <Text style={styles.welcomeText}>Welcome back! 👋</Text>
+                <Text style={styles.userName}>{user?.firstName || 'Traveler'}</Text>
+              </View>
+              <View style={styles.avatarWrapper}>
+                <Image 
+                  source={{ uri: user?.avatar || 'https://www.shutterstock.com/image-vector/default-avatar-social-media-display-600nw-2632690107.jpg' }} 
+                  style={styles.avatar} 
+                />
+                <View style={styles.avatarBadge}>
+                  <Feather name="map" size={12} color="#fff" />
+                </View>
+              </View>
             </View>
-            <Image 
-              source={{ uri: user?.avatar || 'https://www.shutterstock.com/image-vector/default-avatar-social-media-display-600nw-2632690107.jpg' }} 
-              style={styles.avatar} 
-            />
+
+            {/* Stats Row */}
+            <View style={styles.statsRow}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>28</Text>
+                <Text style={styles.statLabel}>Places</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>15</Text>
+                <Text style={styles.statLabel}>Reviews</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>42</Text>
+                <Text style={styles.statLabel}>Photos</Text>
+              </View>
+            </View>
           </View>
 
           {/* Search Bar */}
           <View style={styles.searchContainer}>
-            <Feather name="search" size={20} color="#9ca3af" style={styles.searchIcon} />
+            <View style={styles.searchIconContainer}>
+              <Feather name="search" size={20} color="#0ea5e9" />
+            </View>
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -136,36 +164,118 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: 56,
+    paddingTop: 24,
     paddingBottom: 32,
     paddingHorizontal: 24,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
   },
-  headerTop: {
+  headerContent: {
+    marginBottom: 20,
+  },
+  welcomeSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
+  },
+  textContainer: {
+    flex: 1,
   },
   welcomeText: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 16,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 14,
+    fontWeight: '500',
+    letterSpacing: 0.3,
   },
   userName: {
     color: '#fff',
-    fontSize: 28,
-    fontWeight: '600',
+    fontSize: 32,
+    fontWeight: '700',
+    marginTop: 4,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginLeft: 16,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 3,
+    borderColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  avatarBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#10b981',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 2,
     borderColor: '#fff',
   },
+  statsRow: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  statLabel: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 2,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  statDivider: {
+    width: 1,
+    height: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    marginHorizontal: 8,
+  },
   searchContainer: {
     position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchIconContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    //backgroundColor: 'rgba(14, 165, 233, 0.1)',
+    borderRadius: 12,
   },
   searchIcon: {
     position: 'absolute',
@@ -175,7 +285,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     width: '100%',
-    paddingLeft: 48,
+    paddingLeft: 60,
     paddingRight: 16,
     paddingVertical: 12,
     borderRadius: 16,
