@@ -50,9 +50,12 @@ export default function HomeScreen() {
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.welcomeText}>Welcome,</Text>
-              <Text style={styles.userName}>{user.firstName}</Text>
+              <Text style={styles.userName}>{user?.firstName || 'Traveler'}</Text>
             </View>
-            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+            <Image 
+              source={{ uri: user?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop' }} 
+              style={styles.avatar} 
+            />
           </View>
 
           {/* Search Bar */}

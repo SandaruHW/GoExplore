@@ -8,6 +8,11 @@ import { useAppContext } from '../context/AppContext';
 export default function ProfileScreen({ onLogout, onShowUserDetails, onShowHelpSupport }) {
   const { user, darkMode, toggleDarkMode, favorites } = useAppContext();
 
+  // Default user values if not set
+  const displayName = user ? `${user.firstName || 'User'} ${user.lastName || ''}`.trim() : 'User';
+  const displayEmail = user?.email || 'user@example.com';
+  const displayAvatar = user?.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop';
+
   const settingsItems = [
     {
       id: 'account',
@@ -33,14 +38,12 @@ export default function ProfileScreen({ onLogout, onShowUserDetails, onShowHelpS
           {/* User Info Card */}
           <View style={styles.userCard}>
             <View style={styles.userInfo}>
-              <Image source={{ uri: user.avatar }} style={styles.avatar} />
+              <Image source={{ uri: displayAvatar }} style={styles.avatar} />
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>
-                  {user.firstName} {user.lastName}
-                </Text>
+                <Text style={styles.userName}>{displayName}</Text>
                 <View style={styles.emailContainer}>
                   <Feather name="mail" size={14} color="rgba(255,255,255,0.9)" />
-                  <Text style={styles.email}>{user.email}</Text>
+                  <Text style={styles.email}>{displayEmail}</Text>
                 </View>
               </View>
             </View>
