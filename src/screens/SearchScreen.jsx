@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import DestinationModal from '../components/DestinationModal';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useAppContext } from '../AppContext';
@@ -17,9 +17,10 @@ const categories = [
 
 export default function SearchScreen() {
   const { darkMode } = useAppContext();
-  const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const filteredDestinations = destinations.filter((destination) => {
     const matchesSearch =
@@ -100,7 +101,7 @@ export default function SearchScreen() {
                 {filteredDestinations.map((destination) => (
                   <TouchableOpacity
                     key={destination.id}
-                    onPress={() => navigation.navigate('DestinationDetail', { id: destination.id })}
+                    onPress={() => { setSelectedDestination(destination); setModalVisible(true); }}
                     style={[styles.gridItem, { backgroundColor: darkMode ? '#1f2937' : '#fff' }]}
                   >
                     <View style={styles.imageContainer}>
@@ -132,6 +133,11 @@ export default function SearchScreen() {
           </View>
         </View>
       </ScrollView>
+      <DestinationModal
+        visible={modalVisible}
+        destination={selectedDestination}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
