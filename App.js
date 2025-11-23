@@ -8,6 +8,7 @@ import { AppProvider } from './src/AppContext';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import UserDetailsScreen from './src/screens/UserDetailsScreen';
+import HelpSupportScreen from './src/screens/HelpSupportScreen';
 import MainLayout from './src/components/MainLayout';
 
 // Disable native screens to avoid RNSScreen native prop casting on some Android setups
@@ -16,6 +17,7 @@ enableScreens(false);
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('login');
   const [showUserDetails, setShowUserDetails] = useState(false);
+  const [showHelpSupport, setShowHelpSupport] = useState(false);
 
   const handleLogin = () => {
     console.log('Logged in');
@@ -49,12 +51,15 @@ export default function App() {
               />
             ) : showUserDetails ? (
               <UserDetailsScreen onBack={() => setShowUserDetails(false)} />
+            ) : showHelpSupport ? (
+              <HelpSupportScreen onBack={() => setShowHelpSupport(false)} />
             ) : (
               // Render the real app layout. Native screens have been disabled above
               // to avoid a casting issue on some Android devices.
               <MainLayout 
                 onLogout={handleLogout} 
-                onShowUserDetails={() => setShowUserDetails(true)} 
+                onShowUserDetails={() => setShowUserDetails(true)}
+                onShowHelpSupport={() => setShowHelpSupport(true)}
               />
             )}
             <StatusBar style="auto" />

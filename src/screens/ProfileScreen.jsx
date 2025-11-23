@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useAppContext } from '../AppContext';
 
-export default function ProfileScreen({ onLogout, onShowUserDetails }) {
+export default function ProfileScreen({ onLogout, onShowUserDetails, onShowHelpSupport }) {
   const { user, darkMode, toggleDarkMode, favorites } = useAppContext();
 
   const settingsItems = [
@@ -19,7 +19,7 @@ export default function ProfileScreen({ onLogout, onShowUserDetails }) {
       id: 'help',
       iconName: 'help-circle',
       label: 'Help & Support',
-      action: () => console.log('Help & Support'),
+      action: () => onShowHelpSupport(),
     },
   ];
 

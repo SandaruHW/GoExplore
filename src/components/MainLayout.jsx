@@ -9,10 +9,10 @@ import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
-export default function MainLayout({ onLogout, onShowUserDetails }) {
+export default function MainLayout({ onLogout, onShowUserDetails, onShowHelpSupport }) {
   const { darkMode } = useAppContext();
 
-  const ProfileWrapper = (props) => <ProfileScreen {...props} onLogout={onLogout} onShowUserDetails={onShowUserDetails} />;
+  const ProfileWrapper = (props) => <ProfileScreen {...props} onLogout={onLogout} onShowUserDetails={onShowUserDetails} onShowHelpSupport={onShowHelpSupport} />;
 
   return (
     <Tab.Navigator
